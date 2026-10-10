@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "reva"
+version = "0.1.0"
+description = "A reverse-engineering workbench for PE/COFF binaries, exposed to LLM agents over MCP"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+keywords = ["reverse-engineering", "disassembler", "decompiler", "mcp",
+            "pe", "uefi", "debugger", "emulation", "binary-analysis"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+    "Topic :: Software Development :: Disassemblers",
+]
+
+dependencies = [
+    "capstone>=5.0.1",
+    "unicorn>=2.0.1",
+    "keystone-engine>=0.9.2",
+    "pefile>=2023.2.7",
+    "mcp>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4"]
+
+[project.scripts]
+reva-mcp = "reva.server:main"
+
+[project.urls]
+Homepage = "https://github.com/theodorlucaci/reva"
+Issues = "https://github.com/theodorlucaci/reva/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# faulthandler is disabled because Unicorn's softmmu relies on handled
+# first-chance access violations, which faulthandler reports as "Windows fatal
+# exception" even though they are caught and the run is fine. The noise buries
+# real failures.
+addopts = "-q -p no:faulthandler"
